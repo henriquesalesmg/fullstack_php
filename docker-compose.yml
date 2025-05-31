@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./public:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/ssl:/etc/nginx/ssl
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - task-network
+    extra_hosts:
+      - "projetofluentpdo.test:127.0.0.1"
+      - "projetomedoo.test:127.0.0.1"
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./public:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - task-network
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: task_manager
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user123
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - task-network
+
+volumes:
+  db-data:
+
+networks:
+  task-network:
+    driver: bridge
