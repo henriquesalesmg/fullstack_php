@@ -1,6 +1,8 @@
 services:
   php:
-    build: ./docker/php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
     container_name: php
     volumes:
       - ./:/var/www/html
@@ -14,7 +16,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./public:/var/www/html
+      - ./public:/var/www/html/public
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
       - ./docker/nginx/certs:/etc/nginx/certs
     depends_on:
@@ -35,6 +37,12 @@ services:
       - ./docker/mysql/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -49,6 +57,23 @@ services:
       - mysql
     networks:
       - app-network
+
+  app-seed:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: app-seed
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy 
+      php:
+        condition: service_started 
+    command: ["/var/www/html/docker/scripts/wait-for-it.sh", "mysql:3306", "--", "php", "/var/www/html/docker/scripts/seed.php"]
+    networks:
+      - app-network
+    restart: "no"
 
 networks:
   app-network:

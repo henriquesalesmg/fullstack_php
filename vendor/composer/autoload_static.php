@@ -11,6 +11,10 @@ class ComposerStaticInit05fec32cee7cd38f6df6966e54b52292
         array (
             'Envms\\FluentPDO\\' => 16,
         ),
+        'A' => 
+        array (
+            'App\\' => 4,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -18,10 +22,27 @@ class ComposerStaticInit05fec32cee7cd38f6df6966e54b52292
         array (
             0 => __DIR__ . '/..' . '/envms/fluentpdo/src',
         ),
+        'App\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app',
+        ),
     );
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Envms\\FluentPDO\\Exception' => __DIR__ . '/..' . '/envms/fluentpdo/src/Exception.php',
+        'Envms\\FluentPDO\\Literal' => __DIR__ . '/..' . '/envms/fluentpdo/src/Literal.php',
+        'Envms\\FluentPDO\\Queries\\Base' => __DIR__ . '/..' . '/envms/fluentpdo/src/Queries/Base.php',
+        'Envms\\FluentPDO\\Queries\\Common' => __DIR__ . '/..' . '/envms/fluentpdo/src/Queries/Common.php',
+        'Envms\\FluentPDO\\Queries\\Delete' => __DIR__ . '/..' . '/envms/fluentpdo/src/Queries/Delete.php',
+        'Envms\\FluentPDO\\Queries\\Insert' => __DIR__ . '/..' . '/envms/fluentpdo/src/Queries/Insert.php',
+        'Envms\\FluentPDO\\Queries\\Json' => __DIR__ . '/..' . '/envms/fluentpdo/src/Queries/Json.php',
+        'Envms\\FluentPDO\\Queries\\Select' => __DIR__ . '/..' . '/envms/fluentpdo/src/Queries/Select.php',
+        'Envms\\FluentPDO\\Queries\\Update' => __DIR__ . '/..' . '/envms/fluentpdo/src/Queries/Update.php',
+        'Envms\\FluentPDO\\Query' => __DIR__ . '/..' . '/envms/fluentpdo/src/Query.php',
+        'Envms\\FluentPDO\\Regex' => __DIR__ . '/..' . '/envms/fluentpdo/src/Regex.php',
+        'Envms\\FluentPDO\\Structure' => __DIR__ . '/..' . '/envms/fluentpdo/src/Structure.php',
+        'Envms\\FluentPDO\\Utilities' => __DIR__ . '/..' . '/envms/fluentpdo/src/Utilities.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

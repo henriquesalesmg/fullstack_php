@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Envms\\FluentPDO\\' => array($vendorDir . '/envms/fluentpdo/src'),
+    'App\\' => array($baseDir . '/app'),
 );

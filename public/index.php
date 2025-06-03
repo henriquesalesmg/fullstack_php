@@ -1,62 +1,68 @@
 <?php
-session_start();
-require_once __DIR__ . '/../app/config/db.php';
-
-
-function isAuthenticated() {
-    return isset($_SESSION['user_id']);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
+require_once __DIR__ . '/../vendor/autoload.php';
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+require_once __DIR__ . '/../app/resources/components/auth.php'; 
 
-switch ($uri) {
+$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// --- Rotas da Aplicação ---
+switch ($requestUri) {
     case '/':
-        require_once __DIR__ . '/../app/resources/views/index.php';
+        require __DIR__ . '/../app/resources/views/index.php';
         break;
 
     case '/login':
-        require_once __DIR__ . '/../app/resources/views/auth/login.php';
+        require __DIR__ . '/../app/resources/views/auth/login.php';
         break;
 
-    case '/logout':
-        require_once __DIR__ . '/../app/resources/views/auth/logout.php';
+    case '/register':
+        require __DIR__ . '/../app/resources/views/auth/register.php';
+        break;
+
+    case '/forgot-password':
+        require __DIR__ . '/../app/resources/views/auth/forgot-password.php';
+        break;
+
+    case '/unauthorized':
+        require __DIR__ . '/../app/resources/views/auth/unauthorized.php';
         break;
 
     case '/tasks':
-        if (!isAuthenticated()) {
-            header('Location: /login');
-            exit;
-        }
-        require_once __DIR__ . '/../app/resources/views/tasks/list.php';
+        require __DIR__ . '/../app/resources/views/tasks/index.php';
         break;
 
     case '/tasks/create':
-        if (!isAuthenticated()) {
-            header('Location: /login');
-            exit;
-        }
-        require_once __DIR__ . '/../app/resources/views/tasks/create.php';
+        require __DIR__ . '/../app/resources/views/tasks/create.php';
         break;
 
     case '/tasks/update':
-        if (!isAuthenticated()) {
-            header('Location: /login');
-            exit;
-        }
-        require_once __DIR__ . '/../app/resources/views/tasks/update.php';
+        require __DIR__ . '/../app/resources/views/tasks/update.php';
         break;
 
-    case '/tasks/delete':
-        if (!isAuthenticated()) {
-            header('Location: /login');
-            exit;
-        }
-        require_once __DIR__ . '/../app/resources/views/tasks/delete.php';
+    case '/tasks/list':
+        require __DIR__ . '/../app/resources/views/tasks/list.php';
         break;
 
+    case '/logout':
+        session_destroy();
+        header("Location: /login");
+        exit;
+        break;
+
+    case '/api/user': 
+        require __DIR__ . '/../app/api/user.php';
+        break;
+
+    case '/api/tasks': 
+        require __DIR__ . '/../app/api/index.php'; 
+        break;
     default:
         http_response_code(404);
-        echo "Página não encontrada.";
+        require __DIR__ . '/../app/resources/views/auth/unauthorized.php'; 
         break;
 }
+?>

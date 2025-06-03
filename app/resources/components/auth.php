@@ -1,28 +1,21 @@
 <?php
-session_start();
-
-function requireLogin() {
-    if (!isset($_SESSION['user_id'])) {
-        header('Location: /login');
-        exit;
+function generateCsrfToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
+    return $_SESSION['csrf_token'];
 }
 
-function requireRole($role) {
-    if (!isset($_SESSION['role']) || $_SESSION['role'] !== $role) {
-        header('Location: /unauthorized');
-        exit;
+function verifyCsrfToken($token) {
+    if (isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
+        return true;
     }
+    return false;
 }
 
-function isAuthenticated() {
-    return isset($_SESSION['user_id']);
+function redirectWithMessage($url, $message, $type = 'error') {
+    $param = $type === 'error' ? 'error' : 'success';
+    header("Location: " . $url . "?" . $param . "=" . urlencode($message));
+    exit;
 }
-
-function currentUserName() {
-    return $_SESSION['user_name'] ?? 'Usuário';
-}
-
-function currentUserRole() {
-    return $_SESSION['role'] ?? null;
-}
+?>

@@ -62,6 +62,6 @@
             "install-path": "../envms/fluentpdo"
         }
     ],
-    "dev": true,
+    "dev": false,
     "dev-package-names": []
 }

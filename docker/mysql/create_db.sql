@@ -39,26 +39,3 @@ CREATE TABLE user_sessions (
     expires_at TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
-/*
--- Utilizei a hash em php echo password_hash('user123', PASSWORD_DEFAULT); 
--- para gerar a senha
-*/
-
--- Usuário admin
-INSERT INTO users (name, email, password, role) VALUES (
-    'Admin',
-    'admin@admin.com',
-    -- Senha 'admin123'
-    '$2y$10$uAaIjeE24mJ6H9U03pG5BODqV1TqIzXg3vVo05cCnGz/g1XZZbfyW',
-    'admin'
-);
-
--- Usuário padrão (para testes)
-INSERT INTO users (name, email, password, role) VALUES (
-    'User Teste',
-    'user@teste.com',
-    -- Senha 'user123'
-    '$2y$10$hwjDztX.Tk8TnZdA6pMdOe31D4Kb5YoDPC8QICQ69TfIXVqMQVLcq',
-    'user'
-);
