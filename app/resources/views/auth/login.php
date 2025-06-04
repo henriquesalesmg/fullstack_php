@@ -14,6 +14,11 @@ include_once __DIR__ . '/../../components/auth.php';
                         <?= htmlspecialchars($_GET['error']) ?>
                     </div>
                 <?php endif; ?>
+                <?php if (!empty($_GET['success'])): ?>
+                    <div class="alert alert-success text-center">
+                        <?= htmlspecialchars($_GET['success']) ?>
+                    </div>
+                <?php endif; ?>
 
                 <form action="/api/user?action=login" method="POST">
                     <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
@@ -30,8 +35,16 @@ include_once __DIR__ . '/../../components/auth.php';
 
                     <button type="submit" class="btn btn-primary w-100">Entrar</button>
                 </form>
-
+                <div class="mt-3 text-center">
+                    Não tem uma conta? <a href="/register">Registre-se</a>
                 </div>
+                <div class="mt-3 text-center">
+                    <small>
+                        <a href="/recover">Recuperar Senha</a>
+                    </small>
+                </div>
+
+            </div>
         </div>
     </div>
 </section>

@@ -1,13 +1,41 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 require_once __DIR__ . '/../vendor/autoload.php';
-
-require_once __DIR__ . '/../app/resources/components/auth.php'; 
+require_once __DIR__ . '/../app/resources/components/auth.php';
+require_once __DIR__ . '/../app/middleware/SecurityMiddleware.php';
+$query = require __DIR__ . '/../app/config/db.php';
 
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+$publicRoutes = [
+    '/',
+    '/login',
+    '/register',
+    '/recover',
+    '/reset-password',
+    '/forgot-password',
+    '/unauthorized',
+    '/api/user'
+];
+
+if (!in_array($requestUri, $publicRoutes)) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (!isset($_SESSION['user_id'], $_SESSION['session_token'])) {
+        header('Location: /login');
+        exit;
+    }
+    $session = $query->from('user_sessions')
+        ->where('user_id', $_SESSION['user_id'])
+        ->where('token', $_SESSION['session_token'])
+        ->where('expires_at >= ?', date('Y-m-d H:i:s'))
+        ->fetch();
+    if (!$session) {
+        session_destroy();
+        header('Location: /login?error=Sessão expirada');
+        exit;
+    }
+}
 
 // --- Rotas da Aplicação ---
 switch ($requestUri) {
@@ -47,22 +75,46 @@ switch ($requestUri) {
         require __DIR__ . '/../app/resources/views/tasks/list.php';
         break;
 
+    case '/admin/users':
+        require __DIR__ . '/../app/resources/views/admin/users.php';
+        break;
+    case '/recover':
+        require __DIR__ . '/../app/resources/views/auth/recover.php';
+        break;
+
+    case '/reset-password':
+        require __DIR__ . '/../app/resources/views/auth/reset-password.php';
+        break;
+
     case '/logout':
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (isset($_SESSION['user_id'], $_SESSION['session_token'])) {
+            $query->deleteFrom('user_sessions')
+                ->where('user_id', $_SESSION['user_id'])
+                ->where('token', $_SESSION['session_token'])
+                ->execute();
+        }
         session_destroy();
         header("Location: /login");
         exit;
         break;
 
-    case '/api/user': 
+    case '/api/user':
         require __DIR__ . '/../app/api/user.php';
         break;
 
-    case '/api/tasks': 
-        require __DIR__ . '/../app/api/index.php'; 
+    case '/api/tasks':
+        require __DIR__ . '/../app/api/index.php';
         break;
+
+    case '/api/admin':
+        require __DIR__ . '/../app/api/admin.php';
+        break;
+
     default:
         http_response_code(404);
-        require __DIR__ . '/../app/resources/views/auth/unauthorized.php'; 
+        require __DIR__ . '/../app/resources/views/auth/unauthorized.php';
         break;
 }
-?>

@@ -17,7 +17,7 @@
             <div class="col-lg-4">
                 <h4 class="text-uppercase mb-4">Sobre o Task Manager</h4>
                 <p class="lead mb-0">
-                    Um simples gerenciador de tarefas construído com PHP, Docker e FluentPDO.
+                    Um simples gerenciador de tarefas construído com PHP e Docker.
                 </p>
             </div>
         </div>
@@ -27,7 +27,7 @@
     <div class="container"><small>Copyright &copy; Henrique Sales - 2025</small></div>
 </div>
 
-<!-- <script src="/assets/js/scripts.js"></script> -->
+<script src="/assets/js/config-user.js"></script>
 </body>
 
 </html>
