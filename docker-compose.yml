@@ -1,26 +1,48 @@
 services:
-  php:
-    build:
-      context: .
-      dockerfile: docker/php/Dockerfile
-    container_name: php
-    volumes:
-      - ./:/var/www/html
-    networks:
-      - app-network
-
   nginx:
-    build: ./docker/nginx
+    image: nginx:1.25
     container_name: nginx
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./public:/var/www/html/public
+      - ./fluentpdo/public:/var/www/html/fluentpdo/public
+      - ./medoo/public:/var/www/html/medoo/public
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
       - ./docker/nginx/certs:/etc/nginx/certs
     depends_on:
-      - php
+      - php-fluentpdo
+      - php-medoo
+    networks:
+      - app-network
+
+  php-fluentpdo:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile-fluentpdo
+    container_name: php-fluentpdo
+    volumes:
+      - ./fluentpdo:/var/www/html/fluentpdo
+    working_dir: /var/www/html/fluentpdo
+    expose:
+      - "9000"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  php-medoo:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile-medoo
+    container_name: php-medoo
+    volumes:
+      - ./medoo:/var/www/html/medoo
+    working_dir: /var/www/html/medoo
+    expose:
+      - "9000"
+    depends_on:
+      - mysql
     networks:
       - app-network
 
@@ -30,11 +52,13 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: fluentpdo
+      MYSQL_DATABASE: project
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
     volumes:
-      - ./docker/mysql/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+      - ./docker/mysql:/docker-entrypoint-initdb.d
     networks:
       - app-network
     healthcheck:
@@ -42,7 +66,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -58,18 +81,35 @@ services:
     networks:
       - app-network
 
-  app-seed:
+  app-seed-fluentpdo:
     build:
       context: .
-      dockerfile: docker/php/Dockerfile
-    container_name: app-seed
+      dockerfile: docker/php/Dockerfile-fluentpdo
+    container_name: app-seed-fluentpdo
     volumes:
       - ./:/var/www/html
     depends_on:
       mysql:
-        condition: service_healthy 
-      php:
-        condition: service_started 
+        condition: service_healthy
+      php-fluentpdo:
+        condition: service_started
+    command: ["/var/www/html/docker/scripts/wait-for-it.sh", "mysql:3306", "--", "php", "/var/www/html/docker/scripts/seed.php"]
+    networks:
+      - app-network
+    restart: "no"
+
+  app-seed-medoo:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile-medoo
+    container_name: app-seed-medoo
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+      php-medoo:
+        condition: service_started
     command: ["/var/www/html/docker/scripts/wait-for-it.sh", "mysql:3306", "--", "php", "/var/www/html/docker/scripts/seed.php"]
     networks:
       - app-network
