@@ -1,0 +1,74 @@
+# .gitignore para Projeto FullStack PHP (FluentPDO & Medoo)
+
+# Ignora dependências PHP
+/fluentpdo/vendor/
+/medoo/vendor/
+
+# Ignora arquivos de cache e temporários
+*.log
+*.cache
+*.tmp
+*.swp
+*.swo
+
+# Ignora arquivos de configuração locais
+.env
+.env.local
+.env.*.local
+
+# Ignora arquivos de upload temporários
+/tmp/
+temp/
+cache/
+
+# Ignora arquivos de sistema
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Ignora arquivos do VSCode e IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Ignora arquivos do Composer autoload gerados
+/fluentpdo/composer.lock
+/medoo/composer.lock
+
+# Ignora arquivos de build do Docker (caso existam)
+docker/mysql/*.pid
+docker/mysql/*.sock
+
+# Ignora arquivos de backup
+*.bak
+*.old
+*.orig
+
+# Ignora arquivos de testes e relatórios
+coverage/
+phpunit.xml
+phpunit.result.cache
+
+# Ignora arquivos de upload de usuários (se houver)
+/uploads/
+public/uploads/
+
+# Ignora arquivos de banco de dados locais
+*.sql
+*.sqlite
+*.db
+
+# Ignora arquivos de lock do npm/yarn (caso use frontend com node)
+/package-lock.json
+/yarn.lock
+
+# Ignora arquivos de configuração do Windows
+*.lnk
+
+# Ignora arquivos de configuração do Mac
+.AppleDouble
+.LSOverride
+
+# Fim do .gitignore
