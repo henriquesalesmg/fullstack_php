@@ -93,7 +93,7 @@ services:
         condition: service_healthy
       php-fluentpdo:
         condition: service_started
-    command: ["/var/www/html/docker/scripts/wait-for-it.sh", "mysql:3306", "--", "php", "/var/www/html/docker/scripts/seed.php"]
+    command: ["/var/www/html/docker/scripts/wait-for-it.sh", "-t", "60", "mysql:3306", "--", "php", "/var/www/html/docker/scripts/seed.php"]
     networks:
       - app-network
     restart: "no"
@@ -110,7 +110,7 @@ services:
         condition: service_healthy
       php-medoo:
         condition: service_started
-    command: ["/var/www/html/docker/scripts/wait-for-it.sh", "mysql:3306", "--", "php", "/var/www/html/docker/scripts/seed.php"]
+    command: ["/var/www/html/docker/scripts/wait-for-it.sh", "-t", "60", "mysql:3306", "--", "php", "/var/www/html/docker/scripts/seed.php"]
     networks:
       - app-network
     restart: "no"

@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Envms\FluentPDO\Query;
@@ -14,12 +13,10 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
     ]);
-
     $query = new Query($pdo);
-
     return $query;
-
 } catch (PDOException $e) {
     error_log("Database connection failed in db.php: " . $e->getMessage());
-    throw new PDOException("Erro ao conectar ao banco de dados: " . $e->getMessage(), (int)$e->getCode());
+    echo "Erro ao conectar ao banco de dados: " . $e->getMessage();
+    exit(1);
 }
